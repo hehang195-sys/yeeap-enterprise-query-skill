@@ -5,7 +5,7 @@ description: >
   返回结构化的注册信息（统一社会信用代码、法定代表人、注册资本、经营范围等）。
   执行前必须完成 yeeap 支付验证。所有用户交互（含思考过程）一律使用中文。
 metadata:
-  author: "yeeap-demo"
+  author: "yeeap-HH"
   category: "expert"
   capabilities:
     - "payment.process"
