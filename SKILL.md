@@ -5,7 +5,7 @@ description: >
   返回结构化的注册信息（统一社会信用代码、法定代表人、注册资本、经营范围等）。
   执行前必须完成 yeeap 支付验证。所有用户交互（含思考过程）一律使用中文。
 metadata:
-  author: "yeeap-HH"
+  author: "yeeap-demo"
   category: "expert"
   capabilities:
     - "payment.process"
@@ -91,7 +91,7 @@ npx -y skills add "hehang195-sys/yeeap-skill" --agent '*' -g -y
 > 本 demo 默认写入 `pay_env=SANDBOX`，用于零元沙箱验收；如需真支付，显式设置 `YEEAP_PAY_ENV=PRODUCTION` 后重新创建订单。
 > Agent **禁止**直接 Read 该订单文件。
 
-目标：等待支付成功，并获得 `payCredential`（支付凭证，由 yeeap-wallet 写回订单文件）。
+目标：等待支付成功，并获得 `payCredential`（支付凭证，由 yeeap-wallet 写回订单文件）。只有 yeeap-wallet 输出 `已获取到支付凭证`，或确认订单文件已包含 `payCredential` 时，才能进入第三阶段；若只看到 `支付状态: 成功`，表示订单成功但凭证尚未写入，应继续交由新版 `yeeap-wallet` 补写凭证，不得进入第三阶段。
 
 ---
 
