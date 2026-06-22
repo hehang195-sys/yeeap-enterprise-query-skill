@@ -70,11 +70,15 @@ python3 scripts/create_order.py "<企业关键词>"
 
 ## 💳 第二阶段：支付处理
 
-调用 **`yeeap-wallet`** 技能完成支付。若该技能不存在，先安装：
+优先调用 **`yeeap-wallet`** 技能完成支付。
+
+若当前 Agent 找不到 `yeeap-wallet`，不得使用 npm/npx，也不得安装旧的 `yeeap-skill` 仓库。应先执行 YEEAP 官方 GitHub Release 安装器：
 
 ```bash
-npx -y skills add "hehang195-sys/yeeap-skill" --agent '*' -g -y
+curl -fsSL https://github.com/hehang195-sys/yeeap-wallet/releases/latest/download/install-yeeap-wallet.sh | bash
 ```
+
+安装完成后执行 `~/.yeeap/bin/yeeap-cli doctor`。如果当前 Agent 会话仍无法直接调用新安装的 `yeeap-wallet`，本次流程可使用 CLI 等价命令继续支付；同时告知用户完全退出并重启 Agent 客户端后，后续即可直接使用 `yeeap-wallet`。
 
 调用 `yeeap-wallet` 时传入：
 
@@ -84,6 +88,12 @@ npx -y skills add "hehang195-sys/yeeap-skill" --agent '*' -g -y
   "app_id":   "<第一阶段获取的 APP_ID>",
   "pay_env":  "SANDBOX"
 }
+```
+
+CLI 等价命令：
+
+```bash
+~/.yeeap/bin/yeeap-cli pay-context -o "<第一阶段获取的 ORDER_NO>" -a "<第一阶段获取的 APP_ID>" --env sandbox
 ```
 
 > [!NOTE]
