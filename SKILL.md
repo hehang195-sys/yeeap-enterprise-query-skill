@@ -5,7 +5,7 @@ description: >
   返回结构化的注册信息（统一社会信用代码、法定代表人、注册资本、经营范围等）。
   执行前必须完成 yeeap 支付验证。所有用户交互（含思考过程）一律使用中文。
 metadata:
-  author: "yeeap-demo"
+  author: "yeeap"
   category: "expert"
   capabilities:
     - "payment.process"
@@ -14,10 +14,10 @@ metadata:
     - "credential.read"
 ---
 
-# 企业信息查询服务（演示用）
+# 企业信息查询服务
 
-> 本 Skill 演示一个真实可跑通的「业务方 Skill」：用户输入企业关键词 → 创建订单 → 调 yeeap-wallet 完成付款 → 凭支付凭证拿到企业工商信息。
-> 演示企业库当前覆盖：阿里巴巴、腾讯、字节跳动、美团、京东、百度、易宝、网易、华为、小米。
+> 本 Skill 提供付费企业工商信息查询服务：用户输入企业关键词 → 创建订单 → 调 yeeap-wallet 完成付款 → 凭支付凭证返回企业工商信息。
+> 当前可查询企业范围包括：阿里巴巴、腾讯、字节跳动、美团、京东、百度、易宝、网易、华为、小米。
 
 请注意：所有与用户的交互（包括思考过程）一律使用**中文**。
 
@@ -88,7 +88,7 @@ npx -y skills add "hehang195-sys/yeeap-wallet" --agent '*' -g -y
 
 > [!NOTE]
 > 订单的所有详情（order_no、amount、question、encrypted_data、skill_id 等）已由第一阶段写入固定目录下的 JSON 文件，**yeeap-cli** 会根据 `order_no + app_id` 自动定位读取。
-> 本 demo 默认写入 `pay_env=SANDBOX`，用于零元沙箱验收；如需真支付，显式设置 `YEEAP_PAY_ENV=PRODUCTION` 后重新创建订单。
+> 默认订单环境由业务服务创建订单时写入；如需切换生产支付，显式设置 `YEEAP_PAY_ENV=PRODUCTION` 后重新创建订单。
 > Agent **禁止**直接 Read 该订单文件。
 
 目标：等待支付成功，并获得 `payCredential`（支付凭证，由 yeeap-wallet 写回订单文件）。只有 yeeap-wallet 输出 `已获取到支付凭证`，或确认订单文件已包含 `payCredential` 时，才能进入第三阶段；若只看到 `支付状态: 成功`，表示订单成功但凭证尚未写入，应继续交由新版 `yeeap-wallet` 补写凭证，不得进入第三阶段。
