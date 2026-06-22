@@ -48,7 +48,7 @@ cd agent-skills/yeeap-enterprise-query
 python3 scripts/create_order.py "阿里巴巴"
 # 记下 ORDER_NO、APP_ID；输出应包含 PAY_ENV=SANDBOX
 
-npx --yes yeeap-cli@0.3.6 pay-context -o <ORDER_NO> -a <APP_ID> --env sandbox
+~/.yeeap/bin/yeeap-cli pay-context -o <ORDER_NO> -a <APP_ID> --env sandbox
 python3 scripts/service.py <ORDER_NO>
 ```
 
@@ -77,7 +77,7 @@ python3 scripts/create_order.py "阿里巴巴"
 
 # Phase 2：调用 yeeap-wallet 完成支付（在 Claude / Cursor 中由 yeeap-wallet skill 触发）
 # 等价命令：
-npx --yes yeeap-cli@0.3.6 pay-context -o <ORDER_NO> -a <APP_ID>
+~/.yeeap/bin/yeeap-cli pay-context -o <ORDER_NO> -a <APP_ID>
 # 期间会出现支付授权链接，扫码完成授权后回到命令行即可
 
 # Phase 3：拿支付凭证查询企业信息
