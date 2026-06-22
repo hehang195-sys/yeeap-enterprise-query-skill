@@ -72,7 +72,7 @@ python3 scripts/create_order.py "<企业关键词>"
 
 优先调用 **`yeeap-wallet`** 技能完成支付。
 
-若当前 Agent 找不到 `yeeap-wallet`，不得使用 npm/npx，也不得安装旧的 `yeeap-skill` 仓库。应先执行 YEEAP 官方 GitHub Release 安装器：
+若当前 Agent 找不到 `yeeap-wallet`，不得使用 npm/npx。应先执行 YEEAP 官方 GitHub Release 安装器：
 
 ```bash
 curl -fsSL https://github.com/hehang195-sys/yeeap-wallet/releases/latest/download/install-yeeap-wallet.sh | bash
