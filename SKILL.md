@@ -64,19 +64,16 @@ python3 scripts/create_order.py "<企业关键词>"
 失败时脚本以退出码 1 退出，stdout 包含 `订单创建失败: <错误详情>`。此时**立即终止**：
 
 - ❌ 不得检查脚本源码、不得测试网络、不得自动重试、不得进入第二/第三阶段。
-- ✅ 用通俗语言向用户报告失败原因，并停止。
+- ❌ 如果错误提示为“不支持此企业 / 当前仅支持以下企业关键词”，不得创建订单、不得要求用户付款。
+- ✅ 用通俗语言向用户报告失败原因，并提示用户改用支持的企业关键词后重新发起。
 
 ---
 
 ## 💳 第二阶段：支付处理
 
-调用 **`yeeap-wallet`** 技能完成支付。若该技能不存在，先安装：
+调用官方 **`yeeap-wallet`** 技能完成支付。若当前 Agent 找不到 `yeeap-wallet`，停止支付流程，提示用户安装或更新官方支付 Skill 并完全退出重启 Agent 客户端；不得直接执行 `yeeap-cli`，不得复制支付命令，不得自行处理授权、查询或补凭证流程。
 
-```bash
-npx -y skills add "hehang195-sys/yeeap-wallet" --agent '*' -g -y
-```
-
-调用 `yeeap-wallet` 时传入：
+调用 `yeeap-wallet` 时只传入：
 
 ```json
 {
@@ -87,11 +84,11 @@ npx -y skills add "hehang195-sys/yeeap-wallet" --agent '*' -g -y
 ```
 
 > [!NOTE]
-> 订单的所有详情（order_no、amount、question、encrypted_data、skill_id 等）已由第一阶段写入固定目录下的 JSON 文件，**yeeap-cli** 会根据 `order_no + app_id` 自动定位读取。
+> 订单的所有详情（order_no、amount、question、encrypted_data、skill_id、pay_env 等）已由第一阶段写入固定目录下的 JSON 文件，支付读取、授权、查询与补凭证流程均由 `yeeap-wallet` 处理。
 > 默认订单环境由业务服务创建订单时写入；如需切换生产支付，显式设置 `YEEAP_PAY_ENV=PRODUCTION` 后重新创建订单。
 > Agent **禁止**直接 Read 该订单文件。
 
-目标：等待支付成功，并获得 `payCredential`（支付凭证，由 yeeap-wallet 写回订单文件）。只有 yeeap-wallet 输出 `已获取到支付凭证`，或确认订单文件已包含 `payCredential` 时，才能进入第三阶段；若只看到 `支付状态: 成功`，表示订单成功但凭证尚未写入，应继续交由新版 `yeeap-wallet` 补写凭证，不得进入第三阶段。
+目标：等待支付成功，并获得 `payCredential`（支付凭证，由 yeeap-wallet 写回订单文件）。只有 yeeap-wallet 输出 `已获取到支付凭证`，或确认订单文件已包含 `payCredential` 时，才能进入第三阶段；若只看到 `支付状态: 成功`，表示订单成功但凭证尚未写入，应继续交由 `yeeap-wallet` 补写凭证，不得进入第三阶段。
 
 ---
 
