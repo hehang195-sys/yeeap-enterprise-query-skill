@@ -47,8 +47,11 @@ cd agent-skills/yeeap-enterprise-query
 
 python3 scripts/create_order.py "阿里巴巴"
 # 记下 ORDER_NO、APP_ID；输出应包含 PAY_ENV=SANDBOX
+```
 
-npx --yes yeeap-cli@0.3.7 pay-context -o <ORDER_NO> -a <APP_ID> --env sandbox
+随后在 Agent 客户端中调用官方 `yeeap-wallet` 技能，只传入 `ORDER_NO` 与 `APP_ID` 完成 Phase 2 支付；业务 Skill 不直接执行 `yeeap-cli`。支付成功后再执行：
+
+```bash
 python3 scripts/service.py <ORDER_NO>
 ```
 
@@ -75,10 +78,8 @@ python3 scripts/create_order.py "阿里巴巴"
 # SKILL_ID=SKL_xxx
 # PAY_ENV=PRODUCTION
 
-# Phase 2：调用 yeeap-wallet 完成支付（在 Agent 客户端中由 yeeap-wallet skill 触发）
-# 等价命令：
-npx --yes yeeap-cli@0.3.7 pay-context -o <ORDER_NO> -a <APP_ID>
-# 期间会出现支付授权链接，扫码完成授权后回到命令行即可
+# Phase 2：在 Agent 客户端中调用官方 yeeap-wallet 技能完成支付，只传入 ORDER_NO 与 APP_ID
+# 期间会出现支付授权链接，扫码完成授权后回到 Agent 客户端继续流程
 
 # Phase 3：拿支付凭证查询企业信息
 python3 scripts/service.py <ORDER_NO>
@@ -103,6 +104,7 @@ python3 scripts/service.py <ORDER_NO>
 | 现象 | 原因 | 处理 |
 |------|------|------|
 | 订单创建失败: 400 question 不能为空 | Phase 1 漏传参数 | 加引号传企业关键词 |
+| 订单创建失败: 400 当前仅支持以下企业关键词 | 企业查询成功案例暂未收录该企业 | 改用 §3 中列出的支持企业关键词，未创建订单也不会扣款 |
 | 订单创建失败: 500 企业查询服务配置缺失 | application.yml 未配置 | 按 §1.3 写入 app_id / app_secret / skill_id |
 | 支付提交 403 skill_id 不属于该 app_id | skill_id 与 app_id 不匹配 | 重新检查邮箱或 H5 我的 Skill 列表里的 skill_id |
 | 支付提交 403 沙箱支付未启用 | QA 未开沙箱或生产环境 | 确认 `yeeap.sandbox.enabled=true`（生产必须为 false） |
