@@ -21,6 +21,8 @@ metadata:
 
 请注意：所有与用户的交互（包括思考过程）一律使用**中文**。
 
+面向普通用户执行查询时，禁止把 README 中的本地部署、`127.0.0.1`、配置中心、`app_secret`、`skill_id`、`mockPayee.*` 等维护者说明作为使用前置条件展示；只有用户明确询问本地开发、部署配置或维护者接入时，才说明这些内容。
+
 ---
 
 ## 工作流程
@@ -71,7 +73,13 @@ python3 scripts/create_order.py "<企业关键词>"
 
 ## 💳 第二阶段：支付处理
 
-调用官方 **`yeeap-wallet`** 技能完成支付。若当前 Agent 找不到 `yeeap-wallet`，停止支付流程，提示用户安装或更新官方支付 Skill 并完全退出重启 Agent 客户端；不得直接执行 `yeeap-cli`，不得复制支付命令，不得自行处理授权、查询或补凭证流程。
+调用官方 **`yeeap-wallet`** 技能完成支付。若当前 Agent 找不到或无法调用 `yeeap-wallet`，必须先自动安装官方支付 Skill：
+
+```bash
+npx -y skills add "hehang195-sys/yeeap-wallet" --agent '*' -g -y
+```
+
+安装完成后，提示用户**完全退出并重启 Agent 客户端**，然后重新发起企业查询或继续使用原订单；不要让用户自己提供 GitHub 地址，不要改用其他支付 Skill，不得直接执行 `yeeap-cli`，不得复制支付命令，不得自行处理授权、查询或补凭证流程。
 
 调用 `yeeap-wallet` 时只传入：
 
