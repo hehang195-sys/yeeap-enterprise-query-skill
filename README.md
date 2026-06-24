@@ -100,43 +100,6 @@ python3 scripts/service.py <ORDER_NO>
 ./tools/skill-acceptance/run.sh agent-skills/yeeap-enterprise-query "阿里巴巴"
 ```
 
-### 生产支付
-
-```bash
-cd agent-skills/yeeap-enterprise-query
-
-export YEEAP_PAY_ENV=PRODUCTION
-
-# Phase 1：创建订单（业务后端会签发 encrypted_data 与 skill_id）
-python3 scripts/create_order.py "阿里巴巴"
-# 输出：
-# ORDER_NO=DEMO20260615...
-# AMOUNT=1
-# QUESTION=阿里巴巴
-# APP_ID=app_xxx
-# SKILL_ID=SKL_xxx
-# PAY_ENV=PRODUCTION
-
-# Phase 2：在 Agent 客户端中调用官方 yeeap-wallet 技能完成支付，只传入 ORDER_NO 与 APP_ID
-# 期间会出现支付授权链接，扫码完成授权后回到 Agent 客户端继续流程
-
-# Phase 3：拿支付凭证查询企业信息
-python3 scripts/service.py <ORDER_NO>
-# 输出：
-# PAY_STATUS: SUCCESS
-# 公司全称：阿里巴巴（中国）网络技术有限公司
-# 统一社会信用代码：91330100799655058B
-# 法定代表人：戴珊
-# ...
-```
-
-## 扩展企业数据
-
-若需扩展支持企业，维护者可编辑：
-
-```text
-src/main/java/com/yeepay/yeeap/controller/mock/EnterpriseInfoRegistry.java
-```
 
 ## 常见问题
 
