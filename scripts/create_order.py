@@ -1,7 +1,7 @@
 """
 企业信息查询 Skill - Phase 1：创建订单。
 
-调用模拟收款方后端 /api/mock-payee/create_order，获取 orderNo / amount / encrypted_data / skill_id，
+调用企业查询业务后端 /api/mock-payee/create_order，获取 orderNo / amount / encrypted_data / skill_id，
 并将订单元数据写入 ~/.yeeap/orders/<app_id>/<order_no>.json，供后续 yeeap-wallet 与 service.py 使用。
 """
 
@@ -14,23 +14,14 @@ import urllib.request
 
 from file_utils import save_order
 
-# 默认指向本地启动的 yeeap 服务，可通过环境变量覆盖
+# 默认指向公网生产 yeeap 服务，本地联调可通过环境变量覆盖
 DEFAULT_BASE_URL = "https://ap.yeepay.com/yeeap"
 CREATE_ORDER_URL = os.environ.get("YEEAP_DEMO_BASE_URL", DEFAULT_BASE_URL).rstrip("/") + \
     "/api/mock-payee/create_order"
 
 
-def normalize_pay_env(value: str) -> str:
-    raw = (value or "").strip().upper()
-    if raw in ("", "PROD", "PRODUCTION"):
-        return "PRODUCTION"
-    if raw in ("SANDBOX", "SBX", "TEST"):
-        return "SANDBOX"
-    raise RuntimeError("pay_env 仅支持 PRODUCTION 或 SANDBOX")
-
-
-def create_order(question: str, pay_env: str) -> tuple:
-    pay_data = {"reqData": {"question": question, "payEnv": pay_env}}
+def create_order(question: str) -> tuple:
+    pay_data = {"reqData": {"question": question}}
     payload = json.dumps(pay_data).encode("utf-8")
     req = urllib.request.Request(
         CREATE_ORDER_URL,
@@ -58,7 +49,7 @@ def create_order(question: str, pay_env: str) -> tuple:
     encrypted_data = body.get("encryptedData")
     app_id = body.get("appId")
     skill_id = body.get("skillId")
-    response_pay_env = body.get("payEnv") or pay_env
+    response_pay_env = body.get("payEnv") or "PRODUCTION"
 
     missing = [k for k, v in (
         ("orderNo", order_no),
@@ -92,8 +83,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     try:
-        pay_env = normalize_pay_env(os.environ.get("YEEAP_PAY_ENV", "SANDBOX"))
-        order_no, amount, encrypted_data, app_id, skill_id, pay_env = create_order(args.question, pay_env)
+        order_no, amount, encrypted_data, app_id, skill_id, pay_env = create_order(args.question)
     except RuntimeError as e:
         print(f"订单创建失败: {e}")
         sys.exit(1)
