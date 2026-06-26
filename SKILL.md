@@ -58,7 +58,7 @@ python3 scripts/create_order.py "<企业关键词>"
 - `QUESTION=<值>`
 - `APP_ID=<值>`
 - `SKILL_ID=<值>`
-- `PAY_ENV=PRODUCTION`
+- `PAY_ENV=<PRODUCTION 或 SANDBOX，由企业查询后端决定>`
 
 向用户展示订单号、查询关键词与费用（`AMOUNT` 单位为分，展示时除以 100 并以「元」为单位）。
 然后提取 `ORDER_NO` 与 `APP_ID`，进入第二阶段。
@@ -92,7 +92,7 @@ npx -y skills add "https://github.com/Yeepay-Open-Platform/yeeap-wallet" --agent
 
 > [!NOTE]
 > 订单的所有详情（order_no、amount、question、encrypted_data、skill_id、pay_env 等）已由第一阶段写入固定目录下的 JSON 文件，支付读取、授权、查询与补凭证流程均由 `yeeap-wallet` 处理。
-> 默认订单环境由业务服务创建订单时写入；默认走生产支付，如需沙箱验收，显式设置 `YEEAP_PAY_ENV=SANDBOX` 后重新创建沙箱订单。支付阶段不要再传环境参数，`yeeap-wallet` 只按订单执行。
+> 订单环境由企业查询业务后端创建订单时写入；普通用户默认走生产支付，沙箱验收只由后端服务端配置生成沙箱订单。支付阶段不要传环境参数，`yeeap-wallet` 只按订单执行。
 > Agent **禁止**直接 Read 该订单文件。
 
 目标：等待支付成功，并获得 `payCredential`（支付凭证，由 yeeap-wallet 写回订单文件）。只有 yeeap-wallet 输出 `已获取到支付凭证`，或确认订单文件已包含 `payCredential` 时，才能进入第三阶段；若只看到 `支付状态: 成功`，表示订单成功但凭证尚未写入，应继续交由 `yeeap-wallet` 补写凭证，不得进入第三阶段。
