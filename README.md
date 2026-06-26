@@ -45,61 +45,6 @@ Agent 会按以下流程执行：
 
 以下内容仅供 Skill 维护者、本地联调人员或平台部署方使用。不要把本章节作为普通用户使用前置条件展示。
 
-### 1. 启动 yeeap 后端（含企业查询服务端点）
-
-```bash
-mvn -DskipTests package
-java -jar target/yeeap-*.jar
-# 默认监听 http://127.0.0.1:8080/yeeap
-```
-
-### 2. 在 H5 完成「我要收款」+ Skill 登记
-
-1. 打开 H5（`/yeeap/`），登录后进入「我要收款」，输入邮箱开通收款，记下邮件中的 `app_id` 与 `app_secret`。
-2. 在「我的 Skill」区域点击「+ 登记」，填写 Skill 名称 / 摘要 / 仓库地址（选填）与接收邮箱（默认使用开通收款时的邮箱），提交后系统立即下发 `skill_id` 并发送至邮箱。
-
-### 3. 把真实凭证写入配置中心
-
-不要写入 `application.yml`。在配置中心 `YEEAP_BASE_CONFIG` 中新增：
-
-| Key | 参考值 | 说明 |
-| --- | --- | --- |
-| `mockPayee.enabled` | `true` | 是否启用企业查询业务后端。 |
-| `mockPayee.appId` | `app_xxx` | H5 邮件中收到的 app_id。 |
-| `mockPayee.appSecret` | `xxxxxxxx` | H5 邮件中收到的 app_secret，Base64。 |
-| `mockPayee.skillId` | `SKL_xxx` | 邮件下发的企业查询 Skill ID。 |
-| `mockPayee.defaultAmountFen` | `1` | 默认订单金额，单位分。 |
-
-`app_secret` 必须是 Base64 编码的 16 字节明文（默认值 `eWVlYXBAMDA3LnllZXBheQ==` 即 `yeeap@007.yeepay`）。
-这一阶段同时会验证 `yeeap.wallet.credential-sm4-key-base64` 与上述 secret 一致；本地接入阶段可保持默认配置。
-
-重启服务后生效。
-
-## 本地联调运行链路
-
-### 沙箱运行
-
-不扣真实余额，走 QA Open API 全链路。默认创建 `pay_env=SANDBOX` 订单：
-
-```bash
-cd agent-skills/yeeap-enterprise-query
-
-python3 scripts/create_order.py "阿里巴巴"
-# 记下 ORDER_NO、APP_ID；输出应包含 PAY_ENV=SANDBOX
-```
-
-随后在 Agent 客户端中调用官方 `yeeap-wallet` 技能，只传入 `ORDER_NO` 与 `APP_ID` 完成 Phase 2 支付；业务 Skill 不直接执行 `yeeap-cli`。支付成功后再执行：
-
-```bash
-python3 scripts/service.py <ORDER_NO>
-```
-
-或从仓库根目录：
-
-```bash
-./tools/skill-acceptance/run.sh agent-skills/yeeap-enterprise-query "阿里巴巴"
-```
-
 
 ## 常见问题
 
