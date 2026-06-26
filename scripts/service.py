@@ -14,7 +14,7 @@ import urllib.request
 
 from file_utils import load_order
 
-DEFAULT_BASE_URL = "https://qaap.yeepay.com/yeeap"
+DEFAULT_BASE_URL = "https://ap.yeepay.com/yeeap"
 GET_RESULT_URL = os.environ.get("YEEAP_DEMO_BASE_URL", DEFAULT_BASE_URL).rstrip("/") + \
     "/api/mock-payee/service"
 
