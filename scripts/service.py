@@ -1,7 +1,7 @@
 """
 企业信息查询 Skill - Phase 3：执行查询。
 
-凭借 yeeap-wallet 写回订单文件的 payCredential，调用模拟收款方后端 /api/mock-payee/service，
+凭借 yeeap-wallet 写回订单文件的 payCredential，调用企业查询业务后端 /api/mock-payee/service，
 返回结构化的企业工商信息。
 """
 
@@ -14,6 +14,7 @@ import urllib.request
 
 from file_utils import load_order
 
+# 默认指向公网生产 yeeap 服务，本地联调可通过环境变量覆盖
 DEFAULT_BASE_URL = "https://ap.yeepay.com/yeeap"
 GET_RESULT_URL = os.environ.get("YEEAP_DEMO_BASE_URL", DEFAULT_BASE_URL).rstrip("/") + \
     "/api/mock-payee/service"
