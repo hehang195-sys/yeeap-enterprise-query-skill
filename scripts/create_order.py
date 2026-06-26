@@ -15,7 +15,7 @@ import urllib.request
 from file_utils import save_order
 
 # 默认指向本地启动的 yeeap 服务，可通过环境变量覆盖
-DEFAULT_BASE_URL = "https://qaap.yeepay.com/yeeap"
+DEFAULT_BASE_URL = "https://ap.yeepay.com/yeeap"
 CREATE_ORDER_URL = os.environ.get("YEEAP_DEMO_BASE_URL", DEFAULT_BASE_URL).rstrip("/") + \
     "/api/mock-payee/create_order"
 
